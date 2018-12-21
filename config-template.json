@@ -1,0 +1,6 @@
+{
+  "token": "example-discord-token",
+  "watch_dir": "./watch_dir",
+  "cache_file": "./cache.json",
+  "channel_id": 12345678
+}

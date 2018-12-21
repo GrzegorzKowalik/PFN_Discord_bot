@@ -1,0 +1,7 @@
+.idea/
+
+venv/
+venv3.4/
+
+watch_dir/
+config.json
