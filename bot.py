@@ -3,13 +3,8 @@ import asyncio
 import discord
 import glob
 import re
-import tempfile
 import os.path
-import time
 import hashlib
-
-from PIL import Image
-
 
 try:
     with open('config.json') as f:
@@ -71,7 +66,7 @@ def get_fireball_photos():
     if len(files) == 0:
         raise RuntimeError("No observations found in specified watch_dir")
     files = {f.replace("\\","/") for f in files}
-    regex = re.compile(".*_P\.bmp")
+    regex = re.compile(".*_P\.jpg")
     files = {f for f in files if regex.match(f)}
     files = {f for f in files if "_110000_" not in f and
                                  "_110001_" not in f and
@@ -84,14 +79,6 @@ def filter_new_findings():
     cached_files = {c['path'] for c in cache}
     current_files = get_fireball_photos()
     return list(current_files - cached_files)
-
-
-def convert_bmp_to_jpg(bmp_path):
-    img = Image.open(bmp_path)
-    tmp_dir = tempfile.gettempdir()
-    png_filename = tmp_dir + "\pfn_png_tmp_{}.png".format(time.time())
-    img.save(png_filename, "png")
-    return png_filename
 
 
 def add_to_cache(path):
@@ -120,7 +107,7 @@ async def background_task():
             continue
         if len(findings) == 1:
             entry = add_to_cache(findings[0])
-            photo = convert_bmp_to_jpg(entry['path'])
+            photo = entry['path']
             await client.send_message(channel, content="Znalazłem!\nData: {}\nGodzina: {}\nRef: {}".format(entry['date'], entry['time'], entry['ref']))
             await client.send_file(channel, photo)
         if len(findings) > 1:
@@ -144,7 +131,7 @@ async def on_message(message):
             return
         elif len(entries) == 1:
             entry = entries[0]
-            photo = convert_bmp_to_jpg(entry['path'])
+            photo = entry['path']
             await client.send_file(channel, photo)
         else:
             await client.send_message(channel, content="Ochuj :o")
