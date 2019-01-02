@@ -2,6 +2,7 @@
 
 venv/
 venv3.4/
+venvpypy/
 
 watch_dir/
 config.json
